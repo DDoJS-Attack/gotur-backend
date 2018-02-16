@@ -2,6 +2,14 @@
 
 Node + Express powered backend of Götür API
 
+### Team Members
+* [Burak Bilge Yalçınkaya](https://github.com/bbyalcinkaya)
+* [İsmail Namdar](https://github.com/ismailnamdar)
+* [Uğur Uysal](https://github.com/uguruysal0)
+* [Sadık Ekin Özbay](https://github.com/sadikekin)
+* [Şahin Olut](https://github.com/norveclibalikci)
+
+
 ### Environment Variables
 
 This projects uses [dotenv](https://github.com/motdotla/dotenv) to get the environment variables from a file.
