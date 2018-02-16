@@ -9,4 +9,11 @@ const CustomerSchema = Schema({
 });
 const Customer = mongoose.model('Customer', CustomerSchema);
 
-module.exports = { find: Customer.find };
+// TODO error handling
+module.exports = {
+  find: Customer.find,
+  findById: Customer.findById,
+  create: (newCustomer) => {
+    Customer.create(newCustomer);
+  },
+};
