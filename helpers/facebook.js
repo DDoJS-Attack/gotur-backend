@@ -1,7 +1,6 @@
 const axios = require('axios');
 
 const url = 'https://graph.facebook.com/v2.6/me/messages';
-const menu = ['Kargo ekle', 'Kargo Sil', 'Kargolarımı listele'];
 
 function callSendAPI(messageData) {
   return axios
@@ -23,7 +22,10 @@ function sendTextMessage(recipientId, messageText) {
 
   return callSendAPI(messageData);
 }
-function showMenu(user) {
+// Some bugs :(
+function showMenu(id) {
+  const menu = ['Kargo ekle', 'Kargo Sil', 'Kargolarımı listele', 'geri'];
+
   const buttonDiv = { title: 'Hosgeldiniz', buttons: [] };
   const elements = [];
   for (let i = 0; i < menu; i++) {
@@ -41,7 +43,7 @@ function showMenu(user) {
   elements.push(buttonDiv);
   const payload = {
     recipient: {
-      id: user,
+      id,
     },
     message: {
       attachment: {
@@ -55,4 +57,74 @@ function showMenu(user) {
   };
   return callSendAPI(payload);
 }
-module.exports = { sendTextMessage, showMenu };
+const asd = id =>
+  callSendAPI({
+    recipient: {
+      id,
+    },
+    message: {
+      attachment: {
+        type: 'template',
+        payload: {
+          template_type: 'generic',
+          elements: [
+            {
+              title: 'Daha fazla seçenek için kaydır',
+              buttons: [
+                {
+                  type: 'postback',
+                  title: 'Kargo ekle',
+                  payload: 'ADD_CARGO',
+                },
+                {
+                  type: 'postback',
+                  title: 'Kargo çıkar',
+                  payload: 'REMOVE_CARGO',
+                },
+                {
+                  type: 'postback',
+                  title: 'Kargolarım',
+                  payload: 'LIST_CARGO',
+                },
+              ],
+            },
+          ],
+        },
+      },
+    },
+  });
+
+function sendButton(user, title) {
+  return callSendAPI({
+    recipient: {
+      id: user,
+    },
+    message: {
+      attachment: {
+        type: 'template',
+        payload: {
+          template_type: 'generic',
+          elements: [
+            {
+              title,
+              buttons: [
+                {
+                  type: 'postback',
+                  title: 'Vazgeç',
+                  payload: 'Cancel',
+                },
+              ],
+            },
+          ],
+        },
+      },
+    },
+  });
+}
+
+module.exports = {
+  sendTextMessage,
+  showMenu,
+  sendButton,
+  asd,
+};
