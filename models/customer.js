@@ -5,7 +5,7 @@ const Schema = mongoose.Schema;
 const CustomerSchema = Schema({
   name: { type: String, required: true },
   phoneNum: { type: Number, required: true },
-  cargos: [{ type: Number, ref: 'Cargo' }],
+  cargos: [{ type: Schema.Types.ObjectId, ref: 'Cargo' }],
 });
 const Customer = mongoose.model('Customer', CustomerSchema);
 
@@ -20,5 +20,6 @@ module.exports = {
       x.cargos.splice(toDelete, 1);
       x.save();
     }),
+    addCargo: (query) => {Customer.findByIdAndUpdate()},
   Customer,
 };

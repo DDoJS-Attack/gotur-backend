@@ -81,14 +81,15 @@ module.exports = {
   findCourierCargos: courierId => Cargo.find({ Courier: courierId }),
   findById: id => Cargo.findById(id),
   remove: id => Cargo.remove(id),
-  create: (newCargo) => {
-    Cargo.create(newCargo);
-  },
   updateStatus: (id, statusCode) => updateStatusHelper(id, statusCode),
   ownCargo: (id, courierId) => updateStatusHelper(id, StatusEnum.Owned, courierId),
   relaseCargo: (id, courierId) =>
     Cargo.updateOne(
       { _id: id, 'Times.Status': States[StatusEnum.Owned], $Courier: courierId },
+  create: newCargo => Cargo.create(newCargo),
+  updateStatus: (id, statusCode, courierId) =>
+    Cargo.update(
+      { _id: id, 'Times.Status': States[statusCode] },
       {
         $set: {
           $Courier: null,
