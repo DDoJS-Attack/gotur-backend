@@ -11,7 +11,7 @@ const isNumber = x => !isNaN(x) && isFinite(x);
 const queryBuilder = (req, res, next) => {
   req.dbquery = {};
   if (req.body.customer) req.dbquery.customer = req.body.customer;
-  if (req.body.courrier) req.dbquery.courrier = req.body.courrier;
+  if (req.body.courier) req.dbquery.courier = req.body.courier;
   if (req.body.ids) req.dbquery._id = { $in: req.body.ids.map(Schema.Types.ObjectId) };
   if (req.body.status) req.dbquery.status = { $in: req.body.status };
   if (req.body.near) {
