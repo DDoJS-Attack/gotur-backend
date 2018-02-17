@@ -18,7 +18,7 @@ const queryBuilder = (req, res, next) => {
     const latitude = Number(req.body.near.latitude);
     const longitude = Number(req.body.near.longitude);
     const radius = Number(req.body.near.radius);
-    if (isNumber(latitude) && isNumber(longitude) && isNumber(radius) {
+    if (isNumber(latitude) && isNumber(longitude) && isNumber(radius)) {
       req.dbquery.SourceLoc = {
         $near: {
           $geometry: {
