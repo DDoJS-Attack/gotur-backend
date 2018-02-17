@@ -16,7 +16,7 @@ router.get('/', (req, res) => {
 router.get('/my', async (req, res) => {
   try {
     const payload = { status: 0, cargos: [] };
-    payload.cargos = await Cargo.find({ Owner: req.query.id });
+    payload.cargos = await Cargo.find({ customer: req.query.id });
 
     res.send(payload);
   } catch (err) {
@@ -46,7 +46,7 @@ router.post('/create', async (req, res) => {
   try {
     const body = { ...req.body };
     const cargo = await Cargo.create(body);
-    await Customer.addCargo({ cargoId: cargo._id, ownerId: body.Owner });
+    await Customer.addCargo({ cargoId: cargo._id, ownerId: body.customer });
     res
       .status(200)
       .json({ msg: 'Success', status: 0 })
