@@ -61,5 +61,5 @@ typings/
 # dotenv environment variables file
 .env
 .directory
-
+./helpers/db.js
 # End of https://www.gitignore.io/api/node
