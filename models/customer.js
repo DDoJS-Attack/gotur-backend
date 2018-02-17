@@ -10,9 +10,7 @@ const CustomerSchema = Schema({
 const Customer = mongoose.model('Customer', CustomerSchema);
 
 module.exports = {
-  create: (newCustomer) => {
-    Customer.create(newCustomer);
-  },
+  create: newCustomer => Customer.create(newCustomer),
   findCargosOfCustomer: _id => Customer.findById({ _id }).then(x => x.cargos),
   deleteCargo: (customerId, cargoId) =>
     Customer.findById({ _id: customerId }).then((x) => {
@@ -23,11 +21,9 @@ module.exports = {
   addCargo: (query) => {
     // console.log(query);
     Customer.findById({ _id: query.ownerId }).then((model) => {
-      console.log(model)
       if (model.cargos) {
         model.cargos.push(query.cargoId);
         model.save();
-        console.log(model);
       } else {
         model.cargos = [query.cargoId];
         model.save();

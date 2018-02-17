@@ -4,26 +4,19 @@ const router = express.Router();
 const Customer = require('../models/customer');
 const Cargo = require('../models/cargo');
 const mongoose = require('mongoose');
-
+const cache = require('../helpers/redis');
 // Return the customer info
-router.get('/', (req, res) => {
+router.get('/', cache.route('customer/'), (req, res) => {
   Customer.Customer.findById(req.params.id)
     .then(x => res.send(x))
     .catch(err => res.sendStatus(400));
 });
 
-// TODO
-router.get('/my', async (req, res) => {
+// TODO! Optimize it.
+router.get('/my', cache.route('customer/my'), async (req, res) => {
   try {
-    const cargoIds = await Customer.findCargosOfCustomer(req.query.id);
-    // console.log(cargoIds, req.query.id);
-    // console.log(cargoIds.map(x => mongoose.Types.ObjectId(x)));
-
     const payload = { status: 0, cargos: [] };
-    // payload.cargos = Cargo.Cargo.find({
-    //   _id: { $in: cargoIds.map(x => mongoose.Types.ObjectId(x)) },
-    // }).then(x => res.send(x));
-    Cargo.Cargo.find({ _id: req.query.id }).then(x => x);
+    payload.cargos = await Cargo.find({ Owner: req.query.id });
 
     res.send(payload);
   } catch (err) {
