@@ -27,7 +27,7 @@ These endpoints are used for customer actions.
   * DELETE `/deleteCargo`: Delete a cargo.
     ```javascript
      { 
-       "cargoId": Number, required
+       "cargoId": String, required
      }
     ```
   * POST `/createCustomer`: Create a new customer
