@@ -62,4 +62,5 @@ typings/
 .env
 .directory
 ./helpers/db.js
+./helpers/generate.js
 # End of https://www.gitignore.io/api/node
