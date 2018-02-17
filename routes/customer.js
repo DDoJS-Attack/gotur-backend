@@ -45,8 +45,8 @@ router.post('/create', async (req, res) => {
   try {
     const body = { ...req.body };
     const cargo = await Cargo.create(body);
-    // Customer.create({cargo._id, body.Owner});
-    console.log(cargo._id, body.Owner);
+    await Customer.addCargo({ cargoId: cargo._id, ownerId: body.Owner });
+    // console.log(cargo._id, body.Owner);
   } catch (err) {
     // Error in creating cargo
     console.err(err);
