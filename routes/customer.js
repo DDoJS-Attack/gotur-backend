@@ -14,8 +14,9 @@ router.get('/my', async (req, res) => {
   try {
     const cargoIds = await Customer.findCargosOfCustomer(req.query.id);
     const payload = { status: 200, cargos: [] };
-    payload.cargos.push(Promise.all(cargoIds.map(id => Cargo.findById(id))));
-
+    payload.cargos
+      .push(Promise.all(cargoIds.map(id => Cargo.findById(id))))
+      .catch(res.sendStatus(400));
     res.send(payload);
   } catch (err) {
     res.sendStatus(400);
@@ -41,7 +42,13 @@ router.post('/create', async (req, res) => {
     res.sendStatus(400);
   }
 });
-router.delete('/delete', async (req, res) => {
-  
-})
+router.delete('/deleteCargo', async (req, res) => {
+  const body = { ...req.body };
+  Promise.all(Customer.deleteCargo(body), Cargo.delete())
+    .then(() => res.send({ status: 200 }))
+    .catch((err) => {
+      console.error(err);
+      res.sendStatus(400);
+    });
+});
 module.exports = router;
