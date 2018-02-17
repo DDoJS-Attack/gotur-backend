@@ -20,6 +20,21 @@ module.exports = {
       x.cargos.splice(toDelete, 1);
       x.save();
     }),
-    addCargo: (query) => {Customer.findByIdAndUpdate()},
+  addCargo: (query) => {
+    // console.log(query);
+    Customer.findById({ _id: query.ownerId }).then((model) => {
+      console.log(model)
+      if (model.cargos) {
+        model.cargos.push(query.cargoId);
+        model.save();
+        console.log(model);
+      } else {
+        model.cargos = [query.cargoId];
+        model.save();
+      }
+    });
+
+    // .then(x => console.log(x));
+  },
   Customer,
 };
