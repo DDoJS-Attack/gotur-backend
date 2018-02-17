@@ -12,12 +12,12 @@ router.get('/', (req, res) => {
 });
 
 router.post('/', (req, res) => {
-  const new_courier = {
+  const newCourier = {
     name: req.body.name,
     phone: req.body.phone,
     cargos: [],
   };
-  Courier.create(new_courier)
+  Courier.create(newCourier)
     .then(x => res.json({ status: 'success', msg: 'courier created' }).end())
     .catch(err =>
       res
@@ -27,8 +27,7 @@ router.post('/', (req, res) => {
 });
 
 router.get('/my', (req, res) => {
-  console.log(req.body);
-  Cargo.find({ Courier: req.params.courier_id })
+  Cargo.find({ Courier: req.query.courier_id })
     .then(data => res.json({ status: 0, data }).end())
     .catch(err =>
       res
