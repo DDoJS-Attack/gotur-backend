@@ -18,7 +18,6 @@ module.exports = {
       .then(res => console.log(res))
       .catch(err => console.error(err));
   },
-  findCargosOfCustomer: _id =>
-    Customer.findById({ _id }).then(x => x.cargos)
-  ,
+  findCargosOfCustomer: _id => Customer.findById({ _id }).then(x => x.cargos),
+  Customer,
 };
