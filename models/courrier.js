@@ -20,17 +20,17 @@ const own = (courrierId, cargoId) => Courrier.findByIdAndUpdate(courrierId, {
 });
 
 
-
+/*
 const disOwn = (courrierId, cargoId) => CourrierSchema.findByIdAndUpdate(courrierId, {
   $pull: {
     cargos: new Schema.Types.ObjectId(cargoId),
   },
-});
+});*/
 
 module.exports = {
   findById: (x) => Courrier.findById(x),
   find: (x) => Courrier.find(x),
   create: (x) => Courrier.create(x),
   own,
-  disOwn,
+  //disOwn,
 };
