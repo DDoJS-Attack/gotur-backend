@@ -30,6 +30,7 @@ app.use('/', require('./routes/index'));
 app.use('/customer', require('./routes/customer'));
 app.use('/courier', require('./routes/courier'));
 app.use('/cargo', require('./routes/cargo'));
+app.use('/webhook', require('./routes/webhook'));
 
 app.use((err, req, res, next) => {
   if (err.status) {
