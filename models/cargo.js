@@ -54,7 +54,7 @@ const Cargo = mongoose.model('Cargo', CargoSchema);
 const updateStatusHelper = (id, statusCode, courierId) => {
   if (courierId) {
     return Cargo.updateOne(
-      { _id: id, 'times.Status': States[statusCode] },
+      { _id: id, 'times.status': States[statusCode] },
       {
         $set: {
           courier: courierId,
@@ -65,11 +65,11 @@ const updateStatusHelper = (id, statusCode, courierId) => {
     );
   }
   return Cargo.updateOne(
-    { _id: id, 'Times.Status': States[statusCode] },
+    { _id: id, 'times.status': States[statusCode] },
     {
       $set: {
-        Status: States[statusCode],
-        'Times.$.Date': new Date(),
+        status: States[statusCode],
+        'times.$.date': new Date(),
       },
     },
   );
