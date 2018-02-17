@@ -1,6 +1,24 @@
 # gotur-backend-app
 
-Node + Express powered backend of Götür API
+Node + Express + Mongoose powered backend of Götür API
+
+### Team Members
+* [Burak Bilge Yalçınkaya](https://github.com/bbyalcinkaya)
+* [İsmail Namdar](https://github.com/ismailnamdar)
+* [Uğur Uysal](https://github.com/uguruysal0)
+* [Sadık Ekin Özbay](https://github.com/sadikekin)
+* [Şahin Olut](https://github.com/norveclibalikci)
+
+### What is götür?
+ Götür is a mobile application that allows people to be freelance courier. People can use it for transporting of their belongings. 
+
+### List of features
+* iOS app
+* Recommending the most profitable route for courriers that can be completed in limited time.
+* Admin panel in web (Tentative)
+* Facebook Messenger bot for users. (Tentative)
+
+###
 
 ### Environment Variables
 
