@@ -21,9 +21,26 @@
   }
   ```
 ### `customer`
-*
+These endpoints are used for customer actions.
+  * GET `/?id:<customerID>`: Get customer by ID.
+  * GET `/my?id:<customerID>`: Get cargos of a customer.
+  * GET `/my/:cargoId` : Get cargo by ID.
+  * POST `/create`: Create a new cargo.
+  * DELETE `/deleteCargo`: Delete a cargo.
+    ```javascript
+     { 
+       "cargoId": Number, required
+     }
+    ```
+  * POST `/createCustomer`: Create a new customer
+    ```javascript
+    {
+      "name":     String, required
+      "phoneNum": String, required
+    }
+    ```
 ### `/courier`
-Couriers use this endpoints for their actions.
+These endpoints are used for courier actions.
   * POST `/` : Create a courier.
     POST data:
     ```javascript
