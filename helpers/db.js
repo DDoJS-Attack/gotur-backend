@@ -7,7 +7,7 @@ exports.connect = () => {
   const pass = process.env.DB_PASS;
   const name = process.env.DB_NAME;
 
-  mongoose.connect(`${host}`);
+  mongoose.connect(`mongodb://${user}:${pass}@${host}:${port}/${name}`);
 
   return mongoose.connection;
 };
