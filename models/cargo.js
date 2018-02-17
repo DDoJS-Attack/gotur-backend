@@ -76,7 +76,7 @@ const updateStatusHelper = (id, statusCode, courierId) => {
 };
 module.exports = {
   StatusEnum,
-  create: () => Cargo.create(),
+  create: newCargo => Cargo.create(newCargo),
   find: query => Cargo.find(query),
   findManyById: ids => Cargo.find({ _id: { $in: ids.map(Schema.Types.ObjectId) } }),
   findCustomerCargos: customerId => Cargo.find({ customer: customerId }),
