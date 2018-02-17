@@ -12,8 +12,8 @@ const StatusEnum = {
 };
 const CargoSchema = Schema(
   {
-    sourceAdress: { type: String, required: true },
-    destinationAdress: { type: String, required: true },
+    sourceAddress: { type: String, required: true },
+    destinationAddress: { type: String, required: true },
     sourceLoc: {
       type: [Number],
       required: true,
