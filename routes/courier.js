@@ -6,6 +6,7 @@ const Customer = require('../models/customer.js');
 
 const router = express.Router();
 const mongoose = require('mongoose');
+// const firebase = require('../helpers/firebase');
 
 router.get('/', (req, res) => {
   res.json({ status: 'success', msg: 'not implemented yet' }).end();
@@ -27,6 +28,7 @@ router.post('/', (req, res) => {
 
 router.post('/own', (req, res) => {
   let cour;
+  // let cargoName; just take name of the cargo for firebase notification messsage
   Courier.findById(req.body.courierId)
     .then((c) => {
       cour = c;
@@ -34,7 +36,9 @@ router.post('/own', (req, res) => {
       return Cargo.ownCargo(req.body.cargoId, req.body.cargoId);
     })
     .then(() => cour.save())
-    .then(x => x) // TODO send notif
+    // .then(() => {
+    // firebase.sendMsg(`Courier ${cour.name} assigned to your cargo!`);
+    // }) // TODO send notif
     .then(() => res.json({ status: 0, msg: 'owned cargo' }))
     .catch(err =>
       res
