@@ -27,7 +27,7 @@ app.use(bodyParser.json());
 // Configure Routes
 app.use('/', require('./routes/index'));
 app.use('/customer', require('./routes/customer'));
-app.use('/courier', require('./routes/courrier'));
+app.use('/courier', require('./routes/courier'));
 
 app.use((err, req, res, next) => {
   if (err.status) {
