@@ -59,7 +59,7 @@ router.post('/create', async (req, res) => {
 // Delete cargo of customer
 router.delete('/deleteCargo', async (req, res) => {
   const body = { ...req.body };
-  Promise.all(Customer.deleteCargo(body), Cargo.remove(req.body.cargoId))
+  Promise.all(Customer.deleteCargo(body.customerId, body.cargoId), Cargo.remove(req.body.cargoId))
     .then(() => res.send({ status: 0 }))
     .catch((err) => {
       res.status(400).json('Cannot delete');
