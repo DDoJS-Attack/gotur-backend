@@ -6,6 +6,8 @@ const Schema = require('mongoose').Schema;
 
 const router = express.Router();
 
+const isNumber = x => !isNaN(x) && isFinite(x);
+
 const queryBuilder = (req, res, next) => {
   req.dbquery = {};
   if (req.body.owner) req.dbquery.Owner = req.body.owner;
@@ -16,14 +18,14 @@ const queryBuilder = (req, res, next) => {
     const latitude = Number(req.body.near.latitude);
     const longitude = Number(req.body.near.longitude);
     const radius = Number(req.body.near.radius);
-    if (latitude && longitude && radius) {
+    if (isNumber(latitude) && isNumber(longitude) && isNumber(radius) {
       req.dbquery.SourceLoc = {
         $near: {
           $geometry: {
             type: 'Point',
             coordinates: [longitude, latitude],
           },
-          $maxDistance: radius || 10000,
+          $maxDistance: radius,
         },
       };
     }
