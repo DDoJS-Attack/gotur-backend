@@ -13,14 +13,11 @@
     "body-parser": "^1.18.2",
     "dotenv": "^4.0.0",
     "express": "^4.16.2",
-<<<<<<< HEAD
     "express-redis": "^2.0.0",
     "express-redis-cache": "^1.0.0",
-=======
     "fcm-push": "^1.1.3",
     "firebase": "^4.10.0",
     "firebase-admin": "^5.9.0",
->>>>>>> df03f8b421dae846744572af74267352185422a2
     "lodash": "^4.17.4",
     "mongoose": "^5.0.1",
     "morgan": "^1.9.0",

@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+
 const Schema = mongoose.Schema;
 const CustomerSchema = Schema({
   name: { type: String, required: true },
@@ -17,7 +18,6 @@ module.exports = {
       x.save();
     }),
   addCargo: (query) => {
-    // console.log(query);
     Customer.findById({ _id: query.ownerId }).then((model) => {
       if (model.cargos) {
         model.cargos.push(query.cargoId);
@@ -27,7 +27,6 @@ module.exports = {
         model.save();
       }
     });
-
     // .then(x => console.log(x));
   },
   Customer,
