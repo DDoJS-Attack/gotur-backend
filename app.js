@@ -9,6 +9,7 @@ const app = express();
 
 // Load the variables in .env file to the process.env
 dotenv.config();
+// const cache = require('./helpers/redis');
 
 // Connect to the db and listen if success
 db

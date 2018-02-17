@@ -12,8 +12,8 @@ const StatusEnum = {
 };
 const CargoSchema = Schema(
   {
-    sourceAdress: { type: String, required: true },
-    destinationAdress: { type: String, required: true },
+    sourceAddress: { type: String, required: true },
+    destinationAddress: { type: String, required: true },
     sourceLoc: {
       type: [Number],
       required: true,
@@ -42,7 +42,7 @@ const CargoSchema = Schema(
       required: true,
     },
     price: Number,
-    weigth: Number,
+    weight: Number,
   },
   {
     timestamps: true,
@@ -76,7 +76,7 @@ const updateStatusHelper = (id, statusCode, courierId) => {
 };
 module.exports = {
   StatusEnum,
-  create: () => Cargo.create(),
+  create: newCargo => Cargo.create(newCargo),
   find: query => Cargo.find(query),
   findManyById: ids => Cargo.find({ _id: { $in: ids.map(Schema.Types.ObjectId) } }),
   findCustomerCargos: customerId => Cargo.find({ customer: customerId }),
