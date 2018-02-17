@@ -15,21 +15,22 @@ const Courrier = mongoose.model('Courrier', CourrierSchema);
 
 const own = (courrierId, cargoId) => Courrier.findByIdAndUpdate(courrierId, {
   $addToSet: {
-    cargos: new Schema.Types.ObjectId(cargoId),
+    cargos: cargoId,
   },
 });
 
-const deliver = (courrierId, cargoId) => CourrierSchema.findByIdAndUpdate(courrierId, {
+
+
+const disOwn = (courrierId, cargoId) => CourrierSchema.findByIdAndUpdate(courrierId, {
   $pull: {
     cargos: new Schema.Types.ObjectId(cargoId),
   },
 });
 
-
 module.exports = {
-  findById: Courrier.findById,
-  find: Courrier.find,
-  create: Courrier.create,
+  findById: (x) => Courrier.findById(x),
+  find: (x) => Courrier.find(x),
+  create: (x) => Courrier.create(x),
   own,
-  deliver,
+  disOwn,
 };
