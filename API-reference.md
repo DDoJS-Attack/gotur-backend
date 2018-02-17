@@ -18,7 +18,7 @@
       }
     }
     ```
-### `customer`
+### `/customer`
 These endpoints are used for customer actions.
   * GET `/?id:<customerID>`: Get customer by ID.
   * GET `/my?id:<customerID>`: Get cargos of a customer.
