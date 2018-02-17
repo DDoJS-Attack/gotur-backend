@@ -50,14 +50,9 @@ const CargoSchema = Schema(
 
 const Cargo = mongoose.model('Cargo', CargoSchema);
 
-module.exports = {
-  StatusEnum,
-  find: query => Cargo.find(query),
-  findById: id => Cargo.findById(id),
-  remove: id => Cargo.remove(id),
-  create: newCargo => Cargo.create(newCargo),
-  updateStatus: (id, statusCode, courierId) =>
-    Cargo.update(
+const updateStatusHelper = (id, statusCode, courierId) => {
+  if (courierId) {
+    return Cargo.updateOne(
       { _id: id, 'Times.Status': States[statusCode] },
       {
         $set: {
@@ -66,8 +61,44 @@ module.exports = {
           'Times.$.Date': new Date(),
         },
       },
+    );
+  }
+  return Cargo.updateOne(
+    { _id: id, 'Times.Status': States[statusCode] },
+    {
+      $set: {
+        Status: States[statusCode],
+        'Times.$.Date': new Date(),
+      },
+    },
+  );
+};
+module.exports = {
+  StatusEnum,
+  find: query => Cargo.find(query),
+  findManyById: ids => Cargo.find({ _id: { $in: ids.map(Schema.Types.ObjectId) } }),
+  findCustomerCargos: customerId => Cargo.find({ Owner: customerId }),
+  findCourierCargos: courierId => Cargo.find({ Courier: courierId }),
+  findById: id => Cargo.findById(id),
+  remove: id => Cargo.remove(id),
+  updateStatus: (id, statusCode) => updateStatusHelper(id, statusCode),
+  ownCargo: (id, courierId) => updateStatusHelper(id, StatusEnum.Owned, courierId),
+  relaseCargo: (id, courierId) =>
+    Cargo.updateOne(
+      { _id: id, 'Times.Status': States[StatusEnum.Owned], $Courier: courierId },
+  create: newCargo => Cargo.create(newCargo),
+  updateStatus: (id, statusCode, courierId) =>
+    Cargo.update(
+      { _id: id, 'Times.Status': States[statusCode] },
+      {
+        $set: {
+          $Courier: null,
+          $Status: States[StatusEnum.Default],
+          'Times.$.Date': null,
+        },
+      },
     ),
-  findNearest: (loc, distance) =>
+  findAvailebleNearest: (loc, distance) =>
     Cargo.find({
       SourceLoc: {
         $near: {
@@ -78,7 +109,7 @@ module.exports = {
           $maxDistance: distance,
         },
       },
+      Status: States[StatusEnum.Default],
     }),
-
   Cargo,
 };
