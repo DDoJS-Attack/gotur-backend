@@ -42,7 +42,7 @@ const CargoSchema = Schema(
       required: true,
     },
     price: Number,
-    weigth: Number,
+    weight: Number,
   },
   {
     timestamps: true,
