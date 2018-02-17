@@ -4,16 +4,16 @@ const router = express.Router();
 const Customer = require('../models/customer');
 const Cargo = require('../models/cargo');
 const mongoose = require('mongoose');
-const cache = require('../helpers/redis');
+// const cache = require('../helpers/redis');
 // Return the customer info
-router.get('/', cache.route('customer/'), (req, res) => {
+router.get('/', (req, res) => {
   Customer.Customer.findById(req.params.id)
     .then(x => res.send(x))
     .catch(err => res.sendStatus(400));
 });
 
 // TODO! Optimize it.
-router.get('/my', cache.route('customer/my'), async (req, res) => {
+router.get('/my', async (req, res) => {
   try {
     const payload = { status: 0, cargos: [] };
     payload.cargos = await Cargo.find({ Owner: req.query.id });
@@ -70,6 +70,7 @@ router.post('/createCustomer', async (req, res) => {
   const body = { ...req.body };
   try {
     await Customer.create(body);
+    res.status(200).json({ msg: 'success', status: 0 }).end();
   } catch (err) {
     res.sendStatus(400);
   }
