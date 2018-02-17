@@ -23,18 +23,16 @@ function sendTextMessage(recipientId, messageText) {
   return callSendAPI(messageData);
 }
 // Some bugs :(
-function showMenu(id) {
-  const menu = ['Kargo ekle', 'Kargo Sil', 'Kargolarımı listele', 'geri'];
-
-  const buttonDiv = { title: 'Hosgeldiniz', buttons: [] };
+function sendList(id, cargos) {
+  const buttonDiv = { title: 'Daha fazla seçenek için kaydır', buttons: [] };
   const elements = [];
-  for (let i = 0; i < menu; i++) {
+  for (let i = 0; i < cargos.length; i++) {
     buttonDiv.buttons.push({
       type: 'postback',
-      title: menu[i],
-      payload: menu[i],
+      title: cargos[i],
+      payload: cargos[i],
     });
-    if (i % 3 === 2 && i !== menu.length - 1) {
+    if (i % 3 === 2 && i !== cargos.length - 1) {
       const toPush = { ...buttonDiv };
       elements.push(toPush);
       buttonDiv.buttons = [];
@@ -57,7 +55,8 @@ function showMenu(id) {
   };
   return callSendAPI(payload);
 }
-const asd = id =>
+
+const sendMenu = id =>
   callSendAPI({
     recipient: {
       id,
@@ -124,7 +123,7 @@ function sendButton(user, title) {
 
 module.exports = {
   sendTextMessage,
-  showMenu,
+  sendMenu,
   sendButton,
-  asd,
+  sendList,
 };
