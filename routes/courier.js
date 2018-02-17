@@ -1,6 +1,6 @@
 const express = require('express');
 
-const Courier = require('../models/courrier.js');
+const Courier = require('../models/courier.js');
 const Cargo = require('../models/cargo.js');
 const Customer = require('../models/customer.js');
 
@@ -28,7 +28,7 @@ router.post('/', (req, res) => {
 
 router.get('/my', (req, res) => {
   console.log(req.body);
-  Cargo.find({ Courrier: req.params.courier_id })
+  Cargo.find({ Courier: req.params.courier_id })
     .then(data => res.json({ status: 0, data }).end())
     .catch(err =>
       res
@@ -53,7 +53,7 @@ router.post('/own', (req, res) => {
   Courier.own(req.body.courier_id, req.body.cargo_id)
     .then(x =>
       Cargo.Cargo.findByIdAndUpdate(req.body.cargo_id, {
-        Courrier: req.body.courier_id,
+        Courier: req.body.courier_id,
         OwnTime: Date.now(),
       }))
     // .then( ) send notification to customer: cargo owned by a courier
