@@ -10,16 +10,16 @@ const isNumber = x => !isNaN(x) && isFinite(x);
 
 const queryBuilder = (req, res, next) => {
   req.dbquery = {};
-  if (req.body.owner) req.dbquery.Owner = req.body.owner;
-  if (req.body.courrier) req.dbquery.Courrier = req.body.courrier;
+  if (req.body.customer) req.dbquery.customer = req.body.customer;
+  if (req.body.courrier) req.dbquery.courrier = req.body.courrier;
   if (req.body.ids) req.dbquery._id = { $in: req.body.ids.map(Schema.Types.ObjectId) };
-  if (req.body.status) req.dbquery.Status = { $in: req.body.status };
+  if (req.body.status) req.dbquery.status = { $in: req.body.status };
   if (req.body.near) {
     const latitude = Number(req.body.near.latitude);
     const longitude = Number(req.body.near.longitude);
     const radius = Number(req.body.near.radius);
     if (isNumber(latitude) && isNumber(longitude) && isNumber(radius)) {
-      req.dbquery.SourceLoc = {
+      req.dbquery.sourceLoc = {
         $near: {
           $geometry: {
             type: 'Point',
