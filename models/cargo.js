@@ -2,6 +2,13 @@ const mongoose = require('mongoose');
 
 const Schema = mongoose.Schema;
 
+const States = ['Default', 'Owned', 'OnWay', 'Delivired'];
+const StatusEnum = {
+  Default: 0,
+  Owned: 1,
+  OnWay: 2,
+  Delivired: 3,
+};
 const CargoSchema = Schema(
   {
     SourceAdress: { type: String, required: true },
@@ -9,23 +16,29 @@ const CargoSchema = Schema(
     SourceLoc: {
       type: [Number],
       required: true,
-      index: '2d',
+      index: '2dsphere',
     },
     DestinationLoc: {
       type: [Number],
       required: true,
-      index: '2d',
+      index: '2dsphere',
     },
     Note: { type: String, required: true },
     Courier: { type: Schema.Types.ObjectId, ref: 'Courier', default: null },
     Owner: { type: Schema.Types.ObjectId, ref: 'Customer', required: true },
-    OwnTime: { type: Date, default: null },
-    PickTime: { type: Date, default: null },
-    DeliverTime: { type: Date, default: null },
+    Times: {
+      type: [],
+      required: true,
+      default: [
+        { Status: 'Owned', Date: null },
+        { Status: 'OnWay', Date: null },
+        { Status: 'Delivery', Date: null },
+      ],
+    },
     Status: {
       type: String,
-      enum: ['Waiting', 'OnWay', 'Delivired'], // TODO Cases
-      default: 'Waiting',
+      default: States[0],
+      required: true,
     },
     Price: Number,
     Weigth: Number,
@@ -38,11 +51,36 @@ const CargoSchema = Schema(
 const Cargo = mongoose.model('Cargo', CargoSchema);
 
 module.exports = {
-  find: Cargo.find,
-  findById: Cargo.findById,
-  remove: Cargo.remove,
+  StatusEnum,
+  find: query => Cargo.find(query),
+  findById: id => Cargo.findById(id),
+  remove: id => Cargo.remove(id),
   create: (newCargo) => {
     Cargo.create(newCargo);
   },
+  updateStatus: (id, statusCode, courierId) =>
+    Cargo.update(
+      { _id: id, 'Times.Status': States[statusCode] },
+      {
+        $set: {
+          Courier: courierId,
+          Status: States[statusCode],
+          'Times.$.Date': new Date(),
+        },
+      },
+    ),
+  findNearest: (loc, distance) =>
+    Cargo.find({
+      SourceLoc: {
+        $near: {
+          $geometry: {
+            type: 'Point',
+            coordinates: [loc.longitude, loc.latitude],
+          },
+          $maxDistance: distance,
+        },
+      },
+    }),
+
   Cargo,
 };
