@@ -2,46 +2,47 @@ const mongoose = require('mongoose');
 
 const Schema = mongoose.Schema;
 
-const States = ['Default', 'Owned', 'OnWay', 'Delivery'];
+// enum helper
+const States = ['INITIAL', 'ASSIGNED', 'ONWAY', 'DELIVERY'];
 const StatusEnum = {
-  Default: 0,
-  Owned: 1,
-  OnWay: 2,
-  Delivery: 3,
+  INITIAL: 0,
+  ASSIGNED: 1,
+  ONWAY: 2,
+  DELIVERY: 3,
 };
 const CargoSchema = Schema(
   {
-    SourceAdress: { type: String, required: true },
-    DestinationAdress: { type: String, required: true },
-    SourceLoc: {
+    sourceAdress: { type: String, required: true },
+    destinationAdress: { type: String, required: true },
+    sourceLoc: {
       type: [Number],
       required: true,
       index: '2dsphere',
     },
-    DestinationLoc: {
+    destinationLoc: {
       type: [Number],
       required: true,
       index: '2dsphere',
     },
-    Note: { type: String, required: true },
-    Courier: { type: Schema.Types.ObjectId, ref: 'Courier', default: null },
-    Owner: { type: Schema.Types.ObjectId, ref: 'Customer', required: true },
-    Times: {
+    name: { type: String, required: true },
+    courier: { type: Schema.Types.ObjectId, ref: 'Courier', default: null },
+    customer: { type: Schema.Types.ObjectId, ref: 'Customer', required: true },
+    times: {
       type: [],
       required: true,
       default: [
-        { Status: 'Owned', Date: null },
-        { Status: 'OnWay', Date: null },
-        { Status: 'Delivery', Date: null },
+        { status: 'ASSIGNED', date: null },
+        { status: 'ONWAY', date: null },
+        { status: 'DELIVERY', date: null },
       ],
     },
-    Status: {
+    status: {
       type: String,
       default: States[0],
       required: true,
     },
-    Price: Number,
-    Weigth: Number,
+    price: Number,
+    weigth: Number,
   },
   {
     timestamps: true,
@@ -53,12 +54,12 @@ const Cargo = mongoose.model('Cargo', CargoSchema);
 const updateStatusHelper = (id, statusCode, courierId) => {
   if (courierId) {
     return Cargo.updateOne(
-      { _id: id, 'Times.Status': States[statusCode] },
+      { _id: id, 'times.Status': States[statusCode] },
       {
         $set: {
-          Courier: courierId,
-          Status: States[statusCode],
-          'Times.$.Date': new Date(),
+          courier: courierId,
+          status: States[statusCode],
+          'times.$.date': new Date(),
         },
       },
     );
@@ -75,20 +76,21 @@ const updateStatusHelper = (id, statusCode, courierId) => {
 };
 module.exports = {
   StatusEnum,
+  create: () => Cargo.create(),
   find: query => Cargo.find(query),
   findManyById: ids => Cargo.find({ _id: { $in: ids.map(Schema.Types.ObjectId) } }),
-  findCustomerCargos: customerId => Cargo.find({ Owner: customerId }),
-  findCourierCargos: courierId => Cargo.find({ Courier: courierId }),
+  findCustomerCargos: customerId => Cargo.find({ customer: customerId }),
+  findCourierCargos: courierId => Cargo.find({ couirer: courierId }),
   findById: id => Cargo.findById(id),
   remove: id => Cargo.remove(id),
   updateStatus: (id, statusCode) => updateStatusHelper(id, statusCode),
-  ownCargo: (id, courierId) => updateStatusHelper(id, StatusEnum.Owned, courierId),
-  relaseCargo: (id, courierId) =>
-    Cargo.updateOne({ _id: id, 'Times.Status': States[StatusEnum.Owned], $Courier: courierId }),
-  create: newCargo => Cargo.create(newCargo),
+  ownCargo: (id, courierId) => updateStatusHelper(id, StatusEnum.ASSIGNED, courierId),
+  relaseCargo: id =>
+    Cargo.updateOne({ _id: id }, { $set: { status: States[StatusEnum.INITIAL], courier: null } }),
+  insert: newCargo => Cargo.insert(newCargo),
   findAvailebleNearest: (loc, distance) =>
     Cargo.find({
-      SourceLoc: {
+      sourceLoc: {
         $near: {
           $geometry: {
             type: 'Point',
@@ -97,7 +99,7 @@ module.exports = {
           $maxDistance: distance,
         },
       },
-      Status: States[StatusEnum.Default],
+      status: States[StatusEnum.Default],
     }),
   Cargo,
 };
