@@ -45,7 +45,7 @@ router.post('/', (req, res) => {
     });
 });
 
-router.post('/:id', (req, res) => {
+router.get('/:id', (req, res) => {
   Cargo.findById(req.params.id)
     .then(data => res.json({ status: 0, data }))
     .catch(err => res.status(404).json({ status: 404, msg: 'Cargo not found', err }));
