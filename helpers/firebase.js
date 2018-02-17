@@ -1,18 +1,23 @@
-const firebase = require('firebase');
+const admin = require('firebase-admin');
 
-module.exports = () => {
-  const apiKey = process.env.FIREBASE_API_KEY;
-  const authDomain = process.env.FIREBASE_AUTH_DOMAIN;
-  const databaseURL = process.env.FIREBASE_DATABASE_URL;
-  const storageBucket = process.env.FIREBASE_STORAGE_BUCKET;
-  const config = {
-    apiKey,
-    authDomain,
-    databaseURL,
-    storageBucket,
-  };
+const serviceAccount = require('../../gotur-app-firebase-adminsdk-tkymu-aeea0eb2a6.json');
 
-  const defaultApp = firebase.initializeApp(config);
-  console.log(defaultApp.name); // "[DEFAULT]"
-  return firebase;
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount),
+  databaseURL: 'https://gotur-app.firebaseio.com',
+});
+const messaging = admin.messaging();
+const message = {
+  notification: {
+    title: '$GOOG up 1.43% on the day',
+    body: '$GOOG gained 11.80 points to close at 835.67, up 1.43% on the day.',
+  },
+  topic: 'all',
 };
+
+messaging
+  .send(message)
+  .then(x => console.log(x))
+  .catch(err => console.error(err));
+
+module.exports = { sendMsg: msg => messaging(msg) };
