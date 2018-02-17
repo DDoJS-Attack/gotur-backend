@@ -1,7 +1,5 @@
 const mongoose = require('mongoose');
-
 const Schema = mongoose.Schema;
-// TODO ObjectID instead of number
 const CustomerSchema = Schema({
   name: { type: String, required: true },
   phoneNum: { type: Number, required: true },
