@@ -31,5 +31,6 @@ const startSocket = () => {
     }, 1000);
   });
 };
+startSocket();
 
 module.exports = startSocket;
