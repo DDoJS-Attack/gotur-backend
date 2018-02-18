@@ -34,18 +34,14 @@ router.post('/', (req, res) => {
           Facebook.sendButton(userId, 'Kargonun alınacağı konumu girin').then(setState(userId, 4));
         } else if (webhookEvent.postback.payload === 'REMOVE_CARGO') {
           Facebook.sendList(
-            userId,
-            Customer.Customer.findById('dbUser')
-              .then(data => data.cargos)
-              .then(setState(userId, 2)),
+            userId, [1,3,4]
+            // Customer.Customer.findById(dbUser)
+              // .then(data => data.cargos)
+              // .then(setState(userId, 2)),
           );
         } else if (webhookEvent.postback.payload === 'LIST_CARGO') {
-          Facebook.sendList(
-            userId,
-            Customer.Customer.findById('dbUser')
-              .then(data => data.cargos)
-              .then(setState(userId, 0)),
-          );
+          Facebook.sendList(userId, Customer.Customer.findById(dbUser).then(data => data.cargos));
+          setState(userId, 0);
         } else {
           // sil
           console.log(webhookEvent.postback.title);
@@ -86,10 +82,7 @@ router.post('/', (req, res) => {
             Facebook.sendTextMessage(userId, 'Ne dedigini anlamadım').then(Facebook.sendMenu(userId));
           } else if (val == 3) {
             // sendd list
-            Facebook.sendList(
-              userId,
-              Customer.Customer.findById('dbUser').then(data => data.cargos),
-            );
+            Facebook.sendList(userId, Customer.Customer.findById(dbUser).then(data => data.cargos));
           } else if (val == 4) {
             // Take 2nd location
             const coordinates = webhookEvent.message.attachments[0].payload.coordinates;
