@@ -12,8 +12,9 @@ module.exports = {
   create: newCustomer => Customer.create(newCustomer),
   findCargosOfCustomer: _id => Customer.findById({ _id }).then(x => x.cargos),
   deleteCargo: (customerId, cargoId) =>
-    Customer.findById({ _id: customerId }).then((x) => {
+    Customer.findById(customerId).then((x) => {
       const toDelete = x.cargos.indexOf(cargoId);
+      console.log(x)
       x.cargos.splice(toDelete, 1);
       x.save();
     }),

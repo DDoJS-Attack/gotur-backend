@@ -82,7 +82,7 @@ module.exports = {
   findCustomerCargos: customerId => Cargo.find({ customer: customerId }),
   findCourierCargos: courierId => Cargo.find({ couirer: courierId }),
   findById: id => Cargo.findById(id),
-  remove: id => Cargo.remove(id),
+  remove: id => Cargo.remove({ _id: id }).catch(err => console.error(err)),
   updateStatus: (id, statusCode) => updateStatusHelper(id, statusCode),
   ownCargo: (id, courierId) => updateStatusHelper(id, StatusEnum.ASSIGNED, courierId),
   relaseCargo: id =>

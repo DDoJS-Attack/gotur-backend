@@ -10,19 +10,19 @@ const http = require('http').Server(app);
 const io = require('socket.io')(http);
 const schedule = require('node-schedule');
 
-http.listen(3000, () => {
-  console.log('listening on *:3000');
-});
+// http.listen(3000, () => {
+//   console.log('listening on *:3000');
+// });
 const loc = {
   lat: Number(29.01814899999999),
   lon: Number(41.071823),
 };
-io.on('connection', (socket) => {
-  io.sockets.emit('broadcast', loc);
-  socket.on('disconnect', () => {
-    io.sockets.emit('broadcast', 'hayda');
-  });
-});
+// io.on('connection', (socket) => {
+//   io.sockets.emit('broadcast', loc);
+//   socket.on('disconnect', () => {
+//     io.sockets.emit('broadcast', 'hayda');
+//   });
+// });
 // Load the variables in .env file to the process.env
 dotenv.config();
 // const cache = require('./helpers/redis');
@@ -46,7 +46,7 @@ app.use('/', require('./routes/index'));
 app.use('/customer', require('./routes/customer'));
 app.use('/courier', require('./routes/courier'));
 app.use('/cargo', require('./routes/cargo'));
-app.use('/webhook', require('./routes/webhook'));
+// app.use('/webhook', require('./routes/webhook'));
 
 app.use((err, req, res, next) => {
   if (err.status) {
@@ -60,9 +60,9 @@ app.use((err, req, res, next) => {
   next(err);
 });
 
-setInterval(() => {
-  loc.lat += 0.001;
-  loc.lon += 0.001;
-  console.log(loc);
-  io.sockets.emit('broadcast', loc);
-}, 5000);
+// setInterval(() => {
+//   loc.lat += 0.001;
+//   loc.lon += 0.001;
+//   console.log(loc);
+//   io.sockets.emit('broadcast', loc);
+// }, 5000);

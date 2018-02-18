@@ -5,6 +5,7 @@ const router = express.Router();
 const Facebook = require('../helpers/facebook');
 const redis = require('redis');
 const Customer = require('../models/customer');
+const Cargo = require('../models/cargo');
 
 const client = redis.createClient(6379);
 
@@ -22,12 +23,6 @@ router.post('/', (req, res) => {
       if (webhookEvent.postback) {
         if (webhookEvent.postback.payload === 'ADD_CARGO') {
           Facebook.sendButton(userId, 'Kargonun alınacağı konumu girin').then(setState(userId, 4));
-          const coordinates = webhookEvent.message.attachments[0].payload.coordinates;
-          client.set(
-            `${userId}coor2`,
-            [coordinates.lat, coordinates.long].toString(),
-            setState(userId, 4),
-          );
         } else if (webhookEvent.postback.payload === 'REMOVE_CARGO') {
           Facebook.sendList(
             userId,
@@ -40,51 +35,55 @@ router.post('/', (req, res) => {
           );
         } else {
           console.log(webhookEvent.postback.title);
-          Customer.Customer.findById(userId).then((data) => {
-            data.cargos.push(webhookEvent.postback.title);
-            data.save();
-          });
         }
       } else if (webhookEvent.message) {
-        getCurrState(userId, (err, key) => {
+        getCurrState(userId, (err, val) => {
           if (err) {
             console.error(err);
-          } else if (key === null) {
+          } else if (val === null) {
             Facebook.sendMenu(userId).then(x => console.log('geldi'));
             setState(userId, 0);
-          } else if (key == 0) {
+          } else if (val == 0) {
             Facebook.sendMenu(userId);
-          } else if (key == 1) {
+          } else if (val == 1) {
+            client.get(`${userId}coor1`, (err, val) => {
+              client.get(`${userId}coor2`, (err2, val2) => {
+                // const cargo = await Cargo.create({ customer: userId });
+                setState(
+                  userId,
+                  0,
+                  Facebook.sendTextMessage(userId, `Successfully added cargo from${val}to${val2}`),
+                );
+              });
+            });
+          } else if (val == 2) {
             setState(
               userId,
               0,
               Facebook.sendTextMessage(userId, 'Ne dedigini anlamadım').then(Facebook.sendMenu(userId)),
             );
-          } else if (key == 2) {
-            setState(
-              userId,
-              0,
-              Facebook.sendTextMessage(userId, 'Ne dedigini anlamadım').then(Facebook.sendMenu(userId)),
-            );
-          } else if (key == 3) {
+          } else if (val == 3) {
             // sendd list
             Facebook.sendList(
               userId,
               Customer.Customer.findById('5a884c04947e116eed78b2f7').then(data => data.cargos),
             );
-          } else if (key == 4) {
+          } else if (val == 4) {
             // Take 2nd location
             const coordinates = webhookEvent.message.attachments[0].payload.coordinates;
             console.log(coordinates, 'buradayız');
-            client.set(`${userId}coor2`, [coordinates.lat, coordinates.long].toString());
+            client.set(`${userId}coor1`, [coordinates.lat, coordinates.long].toString());
 
             Facebook.sendButton(userId, 'gönderilecek konumu gönderin').then(setState(userId, 5));
-          } else if (key == 5) {
-            console.log(webhookEvent.message.text);
+          } else if (val == 5) {
+            const coordinates = webhookEvent.message.attachments[0].payload.coordinates;
+            client.set(
+              `${userId}coor2`,
+              [coordinates.lat, coordinates.long].toString(),
+              setState(userId, 1, Facebook.sendTextMessage('Acıklama giriniz')),
+            );
           }
         });
-
-        // Facebook.sendTextMessage(userId, webhookEvent.message.text);
       }
     });
     res

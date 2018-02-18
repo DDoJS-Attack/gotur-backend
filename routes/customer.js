@@ -45,7 +45,10 @@ router.get('/my/:id', async (req, res) => {
 router.post('/create', async (req, res) => {
   try {
     const body = { ...req.body };
+    console.log(body);
+
     const cargo = await Cargo.create(body);
+    console.log(cargo);
     await Customer.addCargo({ cargoId: cargo._id, ownerId: body.customer });
     res
       .status(200)
@@ -57,9 +60,12 @@ router.post('/create', async (req, res) => {
 });
 
 // Delete cargo of customer
-router.delete('/deleteCargo', async (req, res) => {
+router.delete('/deleteCargo', (req, res) => {
   const body = { ...req.body };
-  Promise.all(Customer.deleteCargo(body.customerId, body.cargoId), Cargo.remove(req.body.cargoId))
+  console.log(body);
+
+  Customer.deleteCargo(body.customerId, body.cargoId)
+    .then(Cargo.remove(mongoose.Types.ObjectId(body.cargoId)))
     .then(() => res.send({ status: 0 }))
     .catch((err) => {
       res.status(400).json('Cannot delete');
@@ -70,7 +76,10 @@ router.post('/createCustomer', async (req, res) => {
   const body = { ...req.body };
   try {
     await Customer.create(body);
-    res.status(200).json({ msg: 'success', status: 0 }).end();
+    res
+      .status(200)
+      .json({ msg: 'success', status: 0 })
+      .end();
   } catch (err) {
     res.sendStatus(400);
   }
