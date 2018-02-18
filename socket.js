@@ -24,8 +24,8 @@ const startSocket = () => {
         Math.sin(t) * Math.sqrt(Math.abs(Math.cos(t))) / (Math.sin(t) + 1.4) - 2 * Math.sin(t) + 2;
       t += 0.1;
       const tloc = {
-        lat: loc.lat + 0.1 * r * Math.sin(t),
-        lng: loc.lng + 0.1 * r * Math.cos(t),
+        lat: loc.lat + 0.001 * r * Math.sin(t),
+        lng: loc.lng + 0.001 * r * Math.cos(t),
       };
       io.sockets.emit('broadcast', tloc);
     }, 1000);
