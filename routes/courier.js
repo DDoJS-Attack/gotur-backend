@@ -6,7 +6,7 @@ const Customer = require('../models/customer.js');
 
 const router = express.Router();
 const mongoose = require('mongoose');
-// const firebase = require('../helpers/firebase');
+const cache = require('express-redis-cache')({ port: 6379, expire: 75, prefix: 'courier' });
 
 router.get('/', (req, res) => {
   res.json({ status: 'success', msg: 'not implemented yet' }).end();
@@ -76,7 +76,7 @@ router.post('/relase', (req, res) => {
         .json({ status: 500, msg: err })
         .end());
 });
-router.get('/:id', (req, res) => {
+router.get('/:id', cache.route({ type: 'application/javascript' }), (req, res) => {
   Courier.findById(req.params.id)
     .then(c => res.json({ status: 0, data: c }).end())
     .catch(err =>

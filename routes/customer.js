@@ -4,7 +4,8 @@ const router = express.Router();
 const Customer = require('../models/customer');
 const Cargo = require('../models/cargo');
 const mongoose = require('mongoose');
-// const cache = require('../helpers/redis');
+const cache = require('express-redis-cache')({ port: 6379, expire: 75, prefix: 'customer' });
+
 // Return the customer info
 router.get('/', (req, res) => {
   Customer.Customer.findById(req.params.id)
@@ -13,7 +14,7 @@ router.get('/', (req, res) => {
 });
 
 // TODO! Optimize it.
-router.get('/my', async (req, res) => {
+router.get('/my', cache.route({ type: 'application/javascript', name: 'my' }), async (req, res) => {
   try {
     const payload = { status: 0, cargos: [] };
     payload.cargos = await Cargo.find({ customer: req.query.id });
@@ -27,28 +28,30 @@ router.get('/my', async (req, res) => {
   }
 });
 // Get cargo of specific customer
-router.get('/my/:id', async (req, res) => {
-  try {
-    const cargos = await Cargo.Cargo.findById(req.params.id);
-    const payload = { status: 0, cargos };
+router.get(
+  '/my/:id',
+  cache.route({ type: 'application/javascript', name: 'myid' }),
+  async (req, res) => {
+    try {
+      const cargos = await Cargo.findById(req.params.id);
+      const payload = { status: 0, cargos };
 
-    res.send(payload);
-  } catch (err) {
-    res
-      .status(400)
-      .json('Probably this user does not exist')
-      .end();
-  }
-});
+      res.send(payload);
+    } catch (err) {
+      res
+        .status(400)
+        .json('Probably this user does not exist')
+        .end();
+    }
+  },
+);
 
 // Create a new cargo
 router.post('/create', async (req, res) => {
   try {
     const body = { ...req.body };
-    console.log(body);
 
     const cargo = await Cargo.create(body);
-    console.log(cargo);
     await Customer.addCargo({ cargoId: cargo._id, ownerId: body.customer });
     res
       .status(200)
@@ -62,7 +65,6 @@ router.post('/create', async (req, res) => {
 // Delete cargo of customer
 router.delete('/deleteCargo', (req, res) => {
   const body = { ...req.body };
-  console.log(body);
 
   Customer.deleteCargo(body.customerId, body.cargoId)
     .then(Cargo.remove(mongoose.Types.ObjectId(body.cargoId)))
