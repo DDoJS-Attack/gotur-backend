@@ -76,3 +76,37 @@ These endpoints are used for courier actions.
     }
     ```
   * GET `/:id`: Get a courier's data.
+## TODO
+### `/pathfinder`
+  * POST `/`: Recommend the most profitable path according to the parameters specified by courier.
+    ```javascript
+    {
+	      "location":{                                // courier's starting point
+          "latitude":   Number, required
+          "longitude":  Number, required
+       },
+       "durationLimit": Number, minutes, required  //  
+       "weightLimit": Number, grams, required      // courier's weight limit
+    }
+    ```
+    Response format:
+    ```javascript
+    [
+       {
+         "location": [source-lat0, source-lon0],
+         "action": "Take",
+         "cargoId": "<cargo-id-0>"
+       },
+       {
+         "location": [source-lat1, source-lon1],
+         "action": "Take",
+         "cargoId": "<cargo-id-1>"
+       }
+       ...
+       {
+         "location": [destination-lat0, destination-lon0],
+         "action": "Deliver",
+         "cargoId": "<cargo-id-0>"
+       }
+    ]
+    ```
