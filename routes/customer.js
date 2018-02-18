@@ -4,6 +4,7 @@ const router = express.Router();
 const Customer = require('../models/customer');
 const Cargo = require('../models/cargo');
 const mongoose = require('mongoose');
+const cache = require('express-redis-cache')({ port: 6379, expire: 75, prefix: 'customer' });
 
 // Return the customer info
 router.get('/', (req, res) => {
@@ -12,18 +13,11 @@ router.get('/', (req, res) => {
     .catch(err => res.sendStatus(400));
 });
 
-// TODO
-router.get('/my', async (req, res) => {
+// TODO! Optimize it.
+router.get('/my', cache.route({ type: 'application/javascript', name: 'my' }), async (req, res) => {
   try {
-    const cargoIds = await Customer.findCargosOfCustomer(req.query.id);
-    // console.log(cargoIds, req.query.id);
-    // console.log(cargoIds.map(x => mongoose.Types.ObjectId(x)));
-
     const payload = { status: 0, cargos: [] };
-    // payload.cargos = Cargo.Cargo.find({
-    //   _id: { $in: cargoIds.map(x => mongoose.Types.ObjectId(x)) },
-    // }).then(x => res.send(x));
-    Cargo.Cargo.find({ _id: req.query.id }).then(x => x);
+    payload.cargos = await Cargo.find({ customer: req.query.id });
 
     res.send(payload);
   } catch (err) {
@@ -34,26 +28,31 @@ router.get('/my', async (req, res) => {
   }
 });
 // Get cargo of specific customer
-router.get('/my/:id', async (req, res) => {
-  try {
-    const cargos = await Cargo.Cargo.findById(req.params.id);
-    const payload = { status: 0, cargos };
+router.get(
+  '/my/:id',
+  cache.route({ type: 'application/javascript', name: 'myid' }),
+  async (req, res) => {
+    try {
+      const cargos = await Cargo.findById(req.params.id);
+      const payload = { status: 0, cargos };
 
-    res.send(payload);
-  } catch (err) {
-    res
-      .status(400)
-      .json('Probably this user does not exist')
-      .end();
-  }
-});
+      res.send(payload);
+    } catch (err) {
+      res
+        .status(400)
+        .json('Probably this user does not exist')
+        .end();
+    }
+  },
+);
 
 // Create a new cargo
 router.post('/create', async (req, res) => {
   try {
     const body = { ...req.body };
+
     const cargo = await Cargo.create(body);
-    await Customer.addCargo({ cargoId: cargo._id, ownerId: body.Owner });
+    await Customer.addCargo({ cargoId: cargo._id, ownerId: body.customer });
     res
       .status(200)
       .json({ msg: 'Success', status: 0 })
@@ -64,9 +63,11 @@ router.post('/create', async (req, res) => {
 });
 
 // Delete cargo of customer
-router.delete('/deleteCargo', async (req, res) => {
+router.delete('/deleteCargo', (req, res) => {
   const body = { ...req.body };
-  Promise.all(Customer.deleteCargo(body), Cargo.remove(req.body.cargoId))
+
+  Customer.deleteCargo(body.customerId, body.cargoId)
+    .then(Cargo.remove(mongoose.Types.ObjectId(body.cargoId)))
     .then(() => res.send({ status: 0 }))
     .catch((err) => {
       res.status(400).json('Cannot delete');
@@ -77,6 +78,10 @@ router.post('/createCustomer', async (req, res) => {
   const body = { ...req.body };
   try {
     await Customer.create(body);
+    res
+      .status(200)
+      .json({ msg: 'success', status: 0 })
+      .end();
   } catch (err) {
     res.sendStatus(400);
   }

@@ -9,6 +9,7 @@ const CourierSchema = new Schema({
     type: [{ type: Schema.Types.ObjectId, ref: 'Cargo' }],
     required: true,
   },
+  // TODO rating
 });
 
 const Courier = mongoose.model('Courier', CourierSchema);

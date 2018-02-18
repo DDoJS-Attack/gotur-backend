@@ -12,8 +12,8 @@ const StatusEnum = {
 };
 const CargoSchema = Schema(
   {
-    sourceAdress: { type: String, required: true },
-    destinationAdress: { type: String, required: true },
+    sourceAddress: { type: String, required: true },
+    destinationAddress: { type: String, required: true },
     sourceLoc: {
       type: [Number],
       required: true,
@@ -42,7 +42,7 @@ const CargoSchema = Schema(
       required: true,
     },
     price: Number,
-    weigth: Number,
+    weight: Number,
   },
   {
     timestamps: true,
@@ -54,7 +54,7 @@ const Cargo = mongoose.model('Cargo', CargoSchema);
 const updateStatusHelper = (id, statusCode, courierId) => {
   if (courierId) {
     return Cargo.updateOne(
-      { _id: id, 'times.Status': States[statusCode] },
+      { _id: id, 'times.status': States[statusCode] },
       {
         $set: {
           courier: courierId,
@@ -65,24 +65,24 @@ const updateStatusHelper = (id, statusCode, courierId) => {
     );
   }
   return Cargo.updateOne(
-    { _id: id, 'Times.Status': States[statusCode] },
+    { _id: id, 'times.status': States[statusCode] },
     {
       $set: {
-        Status: States[statusCode],
-        'Times.$.Date': new Date(),
+        status: States[statusCode],
+        'times.$.date': new Date(),
       },
     },
   );
 };
 module.exports = {
   StatusEnum,
-  create: () => Cargo.create(),
+  create: newCargo => Cargo.create(newCargo),
   find: query => Cargo.find(query),
   findManyById: ids => Cargo.find({ _id: { $in: ids.map(Schema.Types.ObjectId) } }),
   findCustomerCargos: customerId => Cargo.find({ customer: customerId }),
   findCourierCargos: courierId => Cargo.find({ couirer: courierId }),
   findById: id => Cargo.findById(id),
-  remove: id => Cargo.remove(id),
+  remove: id => Cargo.remove({ _id: id }).catch(err => console.error(err)),
   updateStatus: (id, statusCode) => updateStatusHelper(id, statusCode),
   ownCargo: (id, courierId) => updateStatusHelper(id, StatusEnum.ASSIGNED, courierId),
   relaseCargo: id =>
