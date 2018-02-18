@@ -8,6 +8,8 @@ const router = express.Router();
 
 const isNumber = x => !isNaN(x) && isFinite(x);
 
+const cache = require('express-redis-cache')({ port: 6379, prefix: 'cargo', expire: 75 });
+
 const queryBuilder = (req, res, next) => {
   req.dbquery = {};
   if (req.body.customer) req.dbquery.customer = req.body.customer;
@@ -47,7 +49,8 @@ router.post('/', (req, res) => {
     });
 });
 
-router.get('/:id', (req, res) => {
+router.get('/:id', cache.route({ type: 'application/javascript' }), (req, res) => {
+  console.log('asdsa');
   Cargo.findById(req.params.id)
     .then(data => res.json({ status: 0, data }))
     .catch(err => res.status(404).json({ status: 404, msg: 'Cargo not found', err }));
