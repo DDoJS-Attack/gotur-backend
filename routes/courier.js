@@ -2,10 +2,8 @@ const express = require('express');
 
 const Courier = require('../models/courier.js');
 const Cargo = require('../models/cargo.js');
-const Customer = require('../models/customer.js');
 
 const router = express.Router();
-const mongoose = require('mongoose');
 const cache = require('express-redis-cache')({ port: 6379, expire: 75, prefix: 'courier' });
 
 router.get('/', (req, res) => {
@@ -36,9 +34,6 @@ router.post('/own', (req, res) => {
       return Cargo.ownCargo(req.body.cargoId, req.body.cargoId);
     })
     .then(() => cour.save())
-    // .then(() => {
-    // firebase.sendMsg(`Courier ${cour.name} assigned to your cargo!`);
-    // }) // TODO send notif
     .then(() => res.json({ status: 0, msg: 'owned cargo' }))
     .catch(err =>
       res
