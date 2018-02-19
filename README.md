@@ -1,3 +1,4 @@
+This project is awarded with 3rd place in BiTaksi-Getir Hackathon 2018. :call_me_hand:
 # gotur-backend-app
 
 Node + Express + Mongoose powered backend of Götür API
@@ -15,8 +16,8 @@ Node + Express + Mongoose powered backend of Götür API
 ### List of features
 * iOS app
 * Recommending the most profitable route for courriers that can be completed in limited time.
-* Admin panel in web (Tentative)
-* Facebook Messenger bot for users. (Tentative)
+* Admin panel in web 
+* Facebook Messenger bot for users. 
 
 ###
 
@@ -36,7 +37,7 @@ The preferred IDE for this project is VSCode.
 
 Facebook Messenger API is used. For more information, you can check https://developers.facebook.com
 If you want to run it on your computer, you need to have SSL connection. We used `ngrok` to tunnel our local port to SSL connection. https://ngrok.com
-Google maps ...
+Google maps is used as well.
 
 #### Running
 
